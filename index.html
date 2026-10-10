@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>[hidden]{display:none!important}</style>
+<title>Matt Pocock Skills 圖鑑</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: field-manual atlas — intro + "我現在想…" router, main-flow strip, then filterable card grid; detail opens in a side drawer. */
+:root{
+  --bg:#eef1f4; --surface:#ffffff; --sunk:#e3e8ee; --ink:#16202a; --muted:#566373; --line:#d3dae2;
+  --accent:#2b59c3; --accent-soft:#dfe7f8;
+  --user:#a4500a; --user-soft:#fbe8d5; --model:#0a7266; --model-soft:#d3efea;
+  --shadow:0 18px 50px rgba(22,32,42,.18);
+  --f-display:"Bricolage Grotesque","Noto Sans TC",system-ui,sans-serif;
+  --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10161d; --surface:#18212b; --sunk:#0c1117; --ink:#e6ebf0; --muted:#9aa7b5; --line:#2a3642;
+  --accent:#7ea2ff; --accent-soft:#1d2a47; --user:#f2a35c; --user-soft:#3a2614; --model:#4fd1bf; --model-soft:#11322e;
+  --shadow:0 18px 50px rgba(0,0,0,.5); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10161d; --surface:#18212b; --sunk:#0c1117; --ink:#e6ebf0; --muted:#9aa7b5; --line:#2a3642;
+  --accent:#7ea2ff; --accent-soft:#1d2a47; --user:#f2a35c; --user-soft:#3a2614; --model:#4fd1bf; --model-soft:#11322e;
+  --shadow:0 18px 50px rgba(0,0,0,.5); color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.65;margin:0;padding-inline:16px}
+.wrap{max-width:1120px;margin:0 auto;padding-block:36px 64px;display:grid;gap:40px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(30px,5vw,48px);font-weight:800;letter-spacing:-.02em}
+h2{font-size:22px;font-weight:700}
+p{margin:0}
+code,.mono{font-family:var(--f-mono);font-size:.9em}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500}
+a{color:var(--accent)}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+
+/* header */
+header{display:grid;gap:18px}
+.lede{max-width:66ch;color:var(--muted);font-size:16px}
+.legend{display:flex;flex-wrap:wrap;gap:14px 28px;margin-top:4px}
+.legend div{display:flex;gap:10px;align-items:flex-start;max-width:46ch;font-size:14px;color:var(--muted)}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.tag.user{background:var(--user-soft);color:var(--user)}
+.tag.model{background:var(--model-soft);color:var(--model)}
+.tag.cat{background:var(--sunk);color:var(--muted);font-weight:500}
+.stats{display:flex;gap:22px;flex-wrap:wrap;font-variant-numeric:tabular-nums;color:var(--muted);font-size:14px}
+.stats b{font-family:var(--f-display);font-size:26px;color:var(--ink);margin-right:4px}
+
+/* router */
+.router{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:28px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px}
+.router .q{display:grid;gap:8px;align-content:start}
+.needs{display:flex;flex-wrap:wrap;gap:8px}
+.need{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:6px 14px;font-size:14px;text-align:left}
+.need:hover{border-color:var(--accent)}
+.need[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.answer{border-left:3px solid var(--accent);padding:4px 0 4px 16px;display:grid;gap:10px;min-height:120px;align-content:start}
+.answer .path{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.answer .why{color:var(--muted);font-size:14px}
+.chip{font-family:var(--f-mono);font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:4px 10px}
+.chip.user{border-color:var(--user);color:var(--user)}
+.chip.model{border-color:var(--model);color:var(--model)}
+.chip:hover{background:var(--sunk)}
+.arrow{color:var(--muted)}
+
+/* flow */
+.flow-wrap{display:grid;gap:14px}
+.flow-scroll{overflow-x:auto;padding-bottom:6px}
+.flow{display:grid;grid-template-columns:repeat(6,minmax(150px,1fr));gap:0;min-width:900px}
+.stage{display:grid;gap:8px;align-content:start;padding:14px 14px 14px 0;position:relative}
+.stage+ .stage{padding-left:14px;border-left:1px dashed var(--line)}
+.stage .n{font-family:var(--f-display);font-weight:800;font-size:13px;color:var(--accent)}
+.stage .t{font-weight:700;font-size:14px}
+.stage .d{font-size:12.5px;color:var(--muted);line-height:1.5}
+.stage .chips{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.side{font-size:13px;color:var(--muted)}
+
+/* filters + grid */
+.toolbar{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);padding-block:10px;z-index:2;border-bottom:1px solid var(--line)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:none;padding:6px 12px;font-size:13.5px}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.search{flex:1 1 220px;min-width:0}
+.search input{width:100%;font:inherit;padding:7px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
+.count{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{display:grid;grid-template-rows:auto auto 1fr;gap:8px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
+.card:hover{border-color:var(--accent);transform:translateY(-1px)}
+.card .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.card .name{font-family:var(--f-mono);font-weight:600;font-size:15px;overflow-wrap:anywhere}
+.card .one{font-size:14px;color:var(--muted);line-height:1.55}
+.card .meta{display:flex;gap:6px;flex-wrap:wrap}
+.empty{color:var(--muted);padding:24px 0}
+
+/* caveats */
+.caveats{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.cv{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:6px;align-content:start}
+.cv h3{font-size:15px;font-family:var(--f-body);font-weight:700}
+.cv p{font-size:14px;color:var(--muted)}
+details.gloss{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 18px}
+details.gloss summary{cursor:pointer;font-weight:700}
+.gl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:8px 18px;margin-top:12px;font-size:14px}
+.gl dt{font-family:var(--f-mono);font-weight:600}
+.gl dd{margin:0;color:var(--muted)}
+
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(10,16,22,.45);z-index:10}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(560px,100%);background:var(--surface);z-index:11;box-shadow:var(--shadow);overflow-y:auto;padding:calc(env(safe-area-inset-top,0px) + 22px) 24px calc(env(safe-area-inset-bottom,0px) + 32px);display:grid;gap:20px;align-content:start}
+.drawer .head{display:grid;gap:10px}
+.drawer .close{justify-self:end;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:4px 12px;font-size:13px}
+.drawer h2{font-family:var(--f-mono);font-size:24px;overflow-wrap:anywhere}
+.sec{display:grid;gap:6px}
+.sec h3{font-size:13px;letter-spacing:.06em;color:var(--muted);font-family:var(--f-body);font-weight:700}
+.sec ul{margin:0;padding-left:20px;display:grid;gap:4px}
+.cmd{display:flex;gap:8px;align-items:stretch;background:var(--sunk);border-radius:10px;padding:10px 12px;min-width:0}
+.cmd code{flex:1;min-width:0;overflow-wrap:anywhere;font-size:13.5px}
+.cmd button{border:1px solid var(--line);background:var(--surface);border-radius:6px;font-size:12px;padding:2px 10px;white-space:nowrap}
+.note{background:var(--user-soft);color:var(--ink);border-radius:10px;padding:10px 14px;font-size:14px}
+.pairs{display:flex;flex-wrap:wrap;gap:6px}
+footer{font-size:13px;color:var(--muted);display:grid;gap:4px}
+
+@media (max-width:760px){.router{grid-template-columns:1fr;padding:18px}}
+@media (prefers-reduced-motion:no-preference){.card{transition:transform .15s,border-color .15s}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="eyebrow">mattpocock/skills · 互動圖鑑</span>
+    <h1>Matt Pocock Skills 圖鑑</h1>
+    <p class="lede">這是 Matt Pocock 每天實際在用的 AI 程式助理技能包。<b>Skill</b> 可以想成「寫給 AI 的標準作業程序」：裝好之後，AI 會照著固定步驟做事，而不是每次自由發揮。本頁整理 README 正式列出的 27 個 skill，每一張卡都依原始 SKILL.md 寫出目的、使用情境與用法。</p>
+    <div class="stats" id="stats"></div>
+    <div class="legend">
+      <div><span class="tag user">你觸發</span><span>只有你輸入 <code>/名稱</code> 才會執行。負責「指揮整個流程」。</span></div>
+      <div><span class="tag model">AI 可自動觸發</span><span>你描述需求時，AI 判斷適合就會自己拿來用；你也能手動輸入。負責「可重複使用的紀律」。</span></div>
+    </div>
+  </header>
+
+  <section class="router" aria-labelledby="router-h">
+    <div class="q">
+      <span class="eyebrow">快速選擇</span>
+      <h2 id="router-h">我現在想……</h2>
+      <div class="needs" id="needs"></div>
+    </div>
+    <div class="answer" id="answer" aria-live="polite"></div>
+  </section>
+
+  <section class="flow-wrap" aria-labelledby="flow-h">
+    <div>
+      <span class="eyebrow">主流程：從想法到上線</span>
+      <h2 id="flow-h">大多數工作走這條路</h2>
+    </div>
+    <div class="flow-scroll"><div class="flow" id="flow"></div></div>
+    <p class="side">隨時可插隊：卡關不知下一步 → <button class="chip user" data-open="ask-matt">/ask-matt</button>　聽不懂 AI 說什麼 → <button class="chip user" data-open="wait-what">/wait-what</button>　對話太長要換人 → <button class="chip user" data-open="handoff">/handoff</button></p>
+  </section>
+
+  <section style="display:grid;gap:14px" aria-labelledby="all-h">
+    <div><span class="eyebrow">全部 skill</span><h2 id="all-h">點卡片看目的、情境與用法</h2></div>
+    <div class="toolbar">
+      <div class="seg" role="group" aria-label="分類" id="f-cat">
+        <button data-v="all" aria-pressed="true">全部</button><button data-v="eng" aria-pressed="false">Engineering</button><button data-v="prod" aria-pressed="false">Productivity</button>
+      </div>
+      <div class="seg" role="group" aria-label="觸發方式" id="f-inv">
+        <button data-v="all" aria-pressed="true">全部</button><button data-v="user" aria-pressed="false">你觸發</button><button data-v="model" aria-pressed="false">AI 可自動</button>
+      </div>
+      <label class="search"><input id="q" type="search" placeholder="搜尋名稱或關鍵字，如：bug、測試、規格" aria-label="搜尋"></label>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section style="display:grid;gap:14px" aria-labelledby="cv-h">
+    <div><span class="eyebrow">挑戰前提</span><h2 id="cv-h">導入前先想清楚的六件事</h2></div>
+    <div class="caveats">
+      <div class="cv"><h3>1. 它預設你有程式碼 repo 和 issue 系統</h3><p>Engineering 類幾乎都要讀寫 issue tracker。非開發同仁能直接受益的主要是 Productivity 類（grill-me、to-questionnaire、handoff、teach）。</p></div>
+      <div class="cv"><h3>2. 每個 repo 要先跑一次 setup</h3><p>沒跑 <code>/setup-matt-pocock-skills</code>，to-spec、to-tickets、triage 都會請你先回去設定。用 GitLab 的團隊要確認機器上有 <code>glab</code> CLI。</p></div>
+      <div class="cv"><h3>3.「AI 自動觸發」不是保證</h3><p>AI 是否會自己叫用，取決於你的描述是否命中該 skill 的說明文字。重要步驟（如 tdd、code-review）不確定時，直接打 <code>/名稱</code> 最可靠。</p></div>
+      <div class="cv"><h3>4. 預設語言是英文</h3><p>GLOSSARY.md、ADR、wait-what 都以英文設計，wait-what 甚至指定「簡化技術英文」。中、越、英混用的團隊，要先決定詞彙表用哪種語言，否則會出現三套術語。</p></div>
+      <div class="cv"><h3>5. 平行執行很耗用量</h3><p><code>/implement-spec</code> 會同時開多個子 agent 各自寫程式。速度快，但 token 成本是單線的好幾倍，適合工單多且相依關係清楚的規格。</p></div>
+      <div class="cv"><h3>6. 本頁沒收錄的部分</h3><p>repo 另有 <code>misc/</code>（4 個）與 <code>in-progress/</code>（7 個）資料夾，README 未列為正式技能，可能隨時變動，所以不收錄。</p></div>
+    </div>
+    <details class="gloss">
+      <summary>術語小抄（看不懂的詞先查這裡）</summary>
+      <dl class="gl">
+        <dt>Issue tracker</dt><dd>記錄待辦與問題的系統，例如 GitHub Issues、GitLab Issues。</dd>
+        <dt>Spec 規格</dt><dd>一份說清楚「要解決什麼問題、怎麼算完成」的文件。</dd>
+        <dt>Ticket 工單</dt><dd>從規格切下來、一次做得完的一小塊工作。</dd>
+        <dt>Tracer bullet</dt><dd>曳光彈切法：每張工單都從資料庫一路貫穿到畫面，做完就能展示，而不是先把整層資料庫做完。</dd>
+        <dt>TDD</dt><dd>測試驅動開發：先寫一個會失敗（紅燈）的測試，再寫剛好讓它通過（綠燈）的程式。</dd>
+        <dt>Seam 接縫</dt><dd>可以從外面觀察、測試程式行為的介面位置，不用拆開內部。</dd>
+        <dt>Deep module</dt><dd>深模組：用很簡單的介面就能使用很多功能，像電視遙控器只有幾顆鍵卻能控制複雜的機器。</dd>
+        <dt>GLOSSARY.md</dt><dd>專案詞彙表，讓人和 AI 對同一個詞有同一個意思。</dd>
+        <dt>ADR</dt><dd>架構決策紀錄：寫下「當初為什麼這樣決定」，避免日後重吵。</dd>
+        <dt>Sub-agent</dt><dd>主 AI 派出去做特定任務的分身，有自己獨立的記憶空間。</dd>
+      </dl>
+    </details>
+  </section>
+
+  <footer>
+    <span>資料來源：<a href="https://github.com/mattpocock/skills" target="_blank" rel="noopener">github.com/mattpocock/skills</a>（README 與各 SKILL.md，2026-10-10 讀取 main 分支）。中文說明為整理摘要，原文以 repo 為準。</span>
+    <span>安裝（Claude Code）：<code>claude plugin install mattpocock-skills@claude-plugins-official</code></span>
+  </footer>
+</div>
+
+<div class="scrim" id="scrim" hidden></div>
+aside class="drawer" id="drawer" hidden role="dialog" aria-modal="true" aria-labelledby="d-name"></aside>
+
+<script>
+const S = [
+// ---------- Engineering · user ----------
+{id:"ask-matt",cat:"eng",inv:"user",
+ one:"技能路由器：描述你的處境，它告訴你該走哪條流程、用哪個 skill。",
+ purpose:"整套 skill 的導覽員。它熟悉主流程（想法 → 上線）與各個分岔，會先讀相關 SKILL.md 再給建議，避免你記錯用法。",
+ when:["剛安裝，還不熟有哪些 skill","做到一半，不確定下一步該用什麼","想知道某個步驟能不能跳過"],
+ cmd:"/ask-matt 我有個新功能的想法但還很模糊，該從哪開始？",
+ steps:["用一句話描述現況與目標","它回覆建議路徑，例如 grill-with-docs → to-spec → to-tickets"],
+ pairs:["grill-with-docs","to-spec","implement"]},
+{id:"grill-with-docs",cat:"eng",inv:"user",
+ one:"連環追問你的計畫，同時把術語寫進 GLOSSARY.md、重大決策寫成 ADR。",
+ purpose:"Matt 最受歡迎的 skill。開工前讓 AI 當嚴格面試官，把每個設計分支問到底；同時把定案的專有名詞與取捨留下文件，之後的對話和程式命名都更精準。",
+ when:["在專案資料夾裡，準備開始任何改動之前","團隊對同一個詞各說各話","需求還模糊，怕 AI 做出不是你要的東西"],
+ cmd:"/grill-with-docs 我想在考勤系統加入跨廠區調班功能",
+ steps:["每一輪列出「現在就能回答」的問題，並附上建議答案","你回 yes 就接受建議，或改寫答案","術語一確定就寫入 GLOSSARY.md；難以回頭的決策寫成 ADR","所有分支問完、你確認共識後才結束"],
+ pairs:["grilling","domain-modeling","to-spec"],
+ note:"沒有專案資料夾、只是一般規劃時，改用 /grill-me。"},
+{id:"triage",cat:"eng",inv:"user",
+ one:"用固定狀態機整理 issue，挑出可交給 AI 的工作並寫好交辦說明。",
+ purpose:"每張 issue 標一個類別（bug / enhancement）和一個狀態（needs-triage、needs-info、ready-for-agent、ready-for-human、wontfix），必要時追問釐清，再寫出 AI 可直接接手的工作說明。",
+ when:["issue 越積越多，不知從何整理","想找出哪些工作可以交給 AI","外部送來的 PR 也要一起分流"],
+ cmd:"/triage 列出需要我處理的項目",
+ steps:["顯示三類待處理：未標記、needs-triage、needs-info 且回報者已回覆","你用自然語言指示，例如「把 #42 移到 ready-for-agent」","它發到 tracker 的每則留言都會加上「AI 產生」聲明"],
+ pairs:["grilling","setup-matt-pocock-skills"]},
+{id:"improve-codebase-architecture",cat:"eng",inv:"user",
+ one:"掃描程式碼找出「深化」重構機會，產出視覺化 HTML 報告後逐一討論。",
+ purpose:"找出介面複雜、實際功能卻很少的「淺模組」，提出把它們整併成深模組的方案，目標是更好測試、也更容易讓 AI 找到路。",
+ when:["改一個小功能要在很多檔案之間跳來跳去","某些地方很難寫測試","作者建議每隔幾天跑一次當健康檢查"],
+ cmd:"/improve-codebase-architecture 聚焦在薪資計算模組",
+ steps:["沒指定方向時，先看 git log 找最近常改的熱點","子 agent 走讀程式碼，用「刪除測試」判斷模組是否太淺","在暫存資料夾產生 HTML 報告並開啟","你挑一個候選方案，它再用追問方式深入討論"],
+ pairs:["codebase-design","grilling","domain-modeling"],
+ note:"它是體檢，不是手術：會指出問題，但不會替你把整團混亂的舊程式一次整理乾淨。"},
+{id:"setup-matt-pocock-skills",cat:"eng",inv:"user",
+ one:"每個 repo 跑一次：設定 issue 平台、分流標籤、文件放哪裡。",
+ purpose:"其他 Engineering skill 需要知道 issue 放在哪（GitHub、GitLab、本機 markdown 或其他）、分流標籤叫什麼、GLOSSARY 和 ADR 放哪。這個 skill 先探索 repo，再逐項問你並寫入設定。",
+ when:["第一次在某個 repo 使用 Engineering 類 skill 之前","換了 issue 平台或標籤命名"],
+ cmd:"/setup-matt-pocock-skills",
+ steps:["讀 git remote、AGENTS.md / CLAUDE.md、既有 GLOSSARY 與 ADR","依序問：issue 平台 → 分流標籤 → 文件位置，每題先給建議答案","把結果寫入 AGENTS.md / CLAUDE.md 與 docs/agents/"],
+ pairs:["triage","to-spec","to-tickets"],
+ note:"git remote 指向 GitLab 時會建議用 GitLab，並透過 glab CLI 操作。"},
+{id:"to-spec",cat:"eng",inv:"user",
+ one:"把目前對話整理成規格書，發佈到 issue tracker，不再重新訪談。",
+ purpose:"將已討論的共識整理成固定格式：問題、解法、大量使用者故事、實作決策、測試決策、不做的範圍，並標上 ready-for-agent。",
+ when:["grill 完、共識已形成","工作需要多個 session，必須留下書面依據"],
+ cmd:"/to-spec",
+ steps:["探索 repo，沿用 GLOSSARY 用語並遵守既有 ADR","提出要在哪些「接縫」測試，請你確認","依範本撰寫並發佈到 issue tracker"],
+ pairs:["grill-with-docs","to-tickets"],
+ note:"規格刻意不寫檔案路徑和程式碼片段，因為那些很快就會過時。"},
+{id:"to-tickets",cat:"eng",inv:"user",
+ one:"把計畫或規格切成「曳光彈」工單，每張標明被哪些工單擋住。",
+ purpose:"每張工單都是從資料庫、API、畫面到測試一路貫穿的細長切片，做完就能展示，大小剛好塞進一個新的對話視窗；並寫明相依關係。",
+ when:["規格完成，準備分工實作","工作太大，需要拆成多次 session"],
+ cmd:"/to-tickets #123",
+ steps:["讀規格或對話內容，必要時探索程式碼","先找「先重構讓改動變簡單」的機會","列出工單清單：標題、被誰擋住、交付什麼","請你確認粒度與相依是否正確，再發佈"],
+ pairs:["to-spec","implement","implement-spec"],
+ note:"大範圍機械式重構（例如改欄位名稱）是例外，改用 expand → migrate → contract 三段式。"},
+{id:"implement",cat:"eng",inv:"user",
+ one:"依規格或單張工單實作，過程用 TDD，結束跑 code-review 再 commit。",
+ purpose:"一次處理一張工單或一個小功能：在約定的接縫用測試驅動，定期跑型別檢查和測試，完成後自動審查。",
+ when:["做單張工單","規模小、一個對話視窗就做得完的功能"],
+ cmd:"/implement #45",
+ steps:["抓取工單並先說出標題","在約定接縫呼叫 tdd","定期跑型別檢查與單一測試檔，最後跑完整測試","呼叫 code-review 後 commit"],
+ pairs:["tdd","code-review","to-tickets"],
+ note:"逐張做工單時，每張之間用 /clear 清空上下文，避免舊內容干擾。"},
+{id:"implement-spec",cat:"eng",inv:"user",
+ one:"一次實作整份規格：多個子 agent 平行開發，合併到同一條整合分支。",
+ purpose:"把工單看成有相依關係的任務圖，同時派多個實作子 agent 處理「已解鎖」的工單，各自在獨立的 worktree 開發，完成後合併，最後整體審查。",
+ when:["工單很多、相依關係清楚","想讓 AI 自己調度，而不是你逐張下指令"],
+ cmd:"/implement-spec #123",
+ steps:["讀規格與工單，建立整合分支","（選用）先派探索子 agent 整理筆記","每個實作子 agent 用 tdd 完成一張工單","合併子 agent 合併成果，再解鎖下一批工單","全部完成後跑 code-review，再修正問題"],
+ pairs:["to-spec","to-tickets","tdd","code-review"],
+ note:"平行執行很快，但用量也成倍增加。"},
+{id:"wayfinder",cat:"eng",inv:"user",
+ one:"規劃一個 session 裝不下的大工程：建立決策地圖，一次解決一個決策。",
+ purpose:"在 issue tracker 開一張「地圖」issue，底下是一張張「決策工單」。逐一解決，直到通往目的地的路線完全清楚。預設只做規劃，不動手施工。",
+ when:["想法很大又模糊，例如整套系統遷移","需要跨好幾天、好幾個對話才能想清楚"],
+ cmd:"/wayfinder 把 EIP 各子系統的權限管理集中化",
+ steps:["先寫下「目的地」：最後要產出規格、決策，或某項變更","列出待決策工單，處理「前提已定」的那幾張","每解決一張，就在地圖上記一行摘要並連結"],
+ pairs:["grilling","to-spec","research"],
+ note:"當你很想「直接開始做」，通常代表地圖已經走到邊界，該交接給 to-spec 了。"},
+{id:"retro",cat:"eng",inv:"user",
+ one:"開發結束後回顧，提出改善 AI 工作環境的建議，依嚴重度排序。",
+ purpose:"不是檢討程式碼，而是檢討 AI 的「工作環境」：找檔案順不順、有沒有自動檢查、編碼標準、AGENTS.md 是否太肥、工具成本、資訊取得。",
+ when:["AI 找檔案找很久","AI 犯了 lint 或型別檢查就能抓到的錯","AGENTS.md / CLAUDE.md 越寫越長"],
+ cmd:"/retro",
+ steps:["讀取指定 session 的紀錄（預設目前這次）","依七個類別找改善點","依嚴重度排序呈現"],
+ pairs:["writing-for-agents","code-review"]},
+// ---------- Engineering · model ----------
+{id:"prototype",cat:"eng",inv:"model",
+ one:"寫用完即丟的原型回答設計問題：邏輯用單一 HTML 模擬，畫面用多版本切換。",
+ purpose:"原型是「回答一個問題的拋棄式程式」。邏輯或狀態問題 → 做一個可點擊的 HTML 讓非工程師也能操作；畫面問題 → 在同一頁產生幾個截然不同的 UI 版本，用網址參數切換。",
+ when:["狀態機或商業邏輯在紙上想不清楚","不確定畫面該長什麼樣子"],
+ cmd:"幫我做個原型，看看請假審核流程的狀態轉換對不對",
+ steps:["判斷是邏輯題還是畫面題","不存資料庫、不打磨、不寫測試","每次操作都把完整狀態顯示出來","驗證後只把結論併入正式程式，原型放到拋棄式分支"],
+ pairs:["handoff","to-spec"]},
+{id:"diagnosing-bugs",cat:"eng",inv:"model",
+ one:"困難 bug 與效能退化的紀律化除錯流程，一關一關推進。",
+ purpose:"核心是先建立一個「只要這個 bug 還在就亮紅燈」的回饋迴圈，接著縮小重現範圍 → 提出假設 → 加觀測點 → 修復 → 寫回歸測試。",
+ when:["偶發錯誤、時好時壞","系統變慢","同一個 bug 反覆修不好"],
+ cmd:"debug 這個：月底結算偶爾會少算一筆加班",
+ steps:["建立回饋迴圈：失敗測試、curl 腳本、瀏覽器腳本、重播紀錄……","把迴圈調得更快、更準、更穩定","縮小 → 假設 → 觀測 → 修復 → 回歸測試"],
+ pairs:["tdd","research"],
+ note:"作者原話的精神：2 秒穩定的迴圈，勝過 30 秒時好時壞的迴圈。輸出中的密碼與金鑰會先遮蔽。"},
+{id:"research",cat:"eng",inv:"model",
+ one:"派背景 agent 依一手資料調查問題，寫成附引用的 Markdown 存進 repo。",
+ purpose:"只信官方文件、原始碼、規格等一手來源，每個結論都附出處；在背景執行，你可以繼續手邊的工作。",
+ when:["要查 API 行為、版本差異","需要讀大量文件但不想中斷目前工作"],
+ cmd:"研究一下 glab CLI 能不能設定 issue 之間的阻擋關係",
+ steps:["背景 agent 追查一手來源","寫成單一 Markdown，逐條附引用","存到 repo 既有的筆記位置"],
+ pairs:["wayfinder","diagnosing-bugs"]},
+{id:"tdd",cat:"eng",inv:"model",
+ one:"測試驅動開發：先寫會失敗的測試，再寫剛好讓它通過的程式。",
+ purpose:"紅燈 → 綠燈的迴圈，一次只做一個垂直切片。好測試只透過公開介面驗證行為，程式內部重寫了，測試也不必改。",
+ when:["開發新功能","修 bug","想補整合測試"],
+ cmd:"用 TDD 做加班時數計算",
+ steps:["先列出要測的接縫，請你確認","寫一個會失敗的測試（紅）","寫剛好讓它通過的程式（綠）","重複下一個切片；重構留給 code-review 階段"],
+ pairs:["codebase-design","code-review","implement"],
+ note:"要避免三種反模式：測試綁死內部實作、預期值用同一套算法算出來（永遠會過）、先寫完全部測試再寫程式。"},
+{id:"domain-modeling",cat:"eng",inv:"model",
+ one:"主動建立並磨利專案的領域模型，即時更新 GLOSSARY.md 與 ADR。",
+ purpose:"你用詞跟詞彙表衝突時立刻指出；用詞模糊時提出精確名稱；用邊界情境壓力測試；比對程式碼是否和你說的一致。",
+ when:["討論專案術語","撰寫或修改 GLOSSARY.md","記錄架構決策"],
+ cmd:"我們說的「工單」到底是生產工單還是維修工單？幫我整理術語",
+ steps:["發現衝突或模糊就當場提問","詞一定案就寫入 GLOSSARY.md（只放定義，不放實作細節）","同時符合「難回頭、沒脈絡會意外、確實有取捨」才寫 ADR"],
+ pairs:["grill-with-docs","wait-what"]},
+{id:"codebase-design",cat:"eng",inv:"model",
+ one:"設計「深模組」的共用詞彙與原則，是查閱用的參考書。",
+ purpose:"統一用語：模組、介面、深度、接縫、轉接器、槓桿、局部性；以及「刪除測試」等原則。目標是用小介面包住大量行為。",
+ when:["設計或改善模組介面","決定接縫放哪裡","被 tdd、improve-codebase-architecture 呼叫"],
+ cmd:"這個 SalaryService 的介面要怎麼設計才夠「深」？",
+ steps:["用固定詞彙描述問題","套用原則：刪掉它，複雜度會集中還是只是搬家？","一個轉接器是假設的接縫，兩個才是真的接縫"],
+ pairs:["tdd","improve-codebase-architecture"]},
+{id:"code-review",cat:"eng",inv:"model",
+ one:"雙軸審查：符不符合編碼規範？有沒有忠實實作規格？兩軸平行進行。",
+ purpose:"對某個基準點以來的 diff，分派兩個子 agent：標準軸（repo 規範＋Fowler 的程式碼異味清單）與規格軸（對照原始 issue 或 spec），互不干擾後並列報告。",
+ when:["審查分支、PR、尚未提交的變更","實作完成後收尾"],
+ cmd:"review since main",
+ steps:["確認基準點（commit、分支、tag）有效且 diff 不是空的","找出原始規格與 repo 的編碼規範","兩個子 agent 平行審查，匯整呈現"],
+ pairs:["implement","pr","retro"]},
+{id:"pr",cat:"eng",inv:"model",
+ one:"PR 描述的固定格式：用最小的圖說明變更、前後對照證據、合併風險。",
+ purpose:"摘要用最小的視覺（虛擬碼、呼叫樹、檔案樹、Mermaid 圖或 diff）；證據放前後對照（截圖最佳）；風險標明單向門或雙向門與影響範圍。",
+ when:["撰寫 PR / MR 說明"],
+ cmd:"幫這個分支寫 PR 描述",
+ steps:["Summary：挑一種最能說清楚的圖","Evidence：Before / After","Merge Danger：能不能回滾、影響範圍有多大"],
+ pairs:["code-review"]},
+{id:"wizard",cat:"eng",inv:"model",
+ one:"產生互動式 bash 精靈，一步步帶「人」完成 AI 做不到的手動操作。",
+ purpose:"自動開網址、告訴你點哪裡、收集金鑰（隱藏輸入）、寫入 .env 或 CI secrets，每一步都確認，並顯示剩幾步。",
+ when:["設定雲端服務或 CI 金鑰","操作不熟悉的第三方後台","一次性的資料遷移或切換"],
+ cmd:"做一個 wizard 帶我設定 SMTP 帳號與 GitLab CI 變數",
+ steps:["讀 .env.example、CI 設定，列出所有步驟與要收集的值","每一步寫出陌生人也能照做的路徑","用內建範本產生腳本，靜態檢查後交給你執行"],
+ pairs:["setup-matt-pocock-skills"],
+ note:"AI 自己做得到的步驟，就不該用 wizard。"},
+// ---------- Productivity · user ----------
+{id:"grill-me",cat:"prod",inv:"user",
+ one:"沒有程式碼的連環追問，把計畫的每個分支都問到底。",
+ purpose:"與 grill-with-docs 用同一個追問引擎，但不產生任何文件，適合一般規劃與決策。",
+ when:["活動規劃、採購決策、制度設計","想先壓力測試一個想法再行動"],
+ cmd:"/grill-me 我想在越南廠推行新的請假流程",
+ steps:["每一輪提出數個編號問題並附建議答案","你逐題回答或回 yes","問完所有分支、你確認共識才結束"],
+ pairs:["grilling","to-questionnaire"]},
+{id:"handoff",cat:"prod",inv:"user",
+ one:"把目前對話壓縮成交接文件，讓新的 agent 接手。",
+ purpose:"存到系統暫存資料夾，附上「建議使用的 skill」；已存在於規格、issue、commit 的內容只放連結不重抄；自動遮蔽密碼與個資。",
+ when:["對話太長，要開新 session","去另一個資料夾做原型，之後要帶結論回來"],
+ cmd:"/handoff 下一個 session 要做 UI 原型",
+ steps:["可在指令後說明下個 session 要做什麼","產出交接文件路徑","在新對話中引用該文件"],
+ pairs:["prototype","implement"]},
+{id:"teach",cat:"prod",inv:"user",
+ one:"把目前資料夾變成教室，跨多次 session 教你一項新技能。",
+ purpose:"MISSION.md 記錄你為何要學；每課是一個短小精美的 HTML；另有速查表與學習紀錄。教學設計採用提取練習、間隔重複與交錯練習，追求長期記憶。",
+ when:["想系統性學一個新主題","需要可回顧的教材與進度紀錄"],
+ cmd:"/teach 我想學用 Python 做資料分析",
+ steps:["先問清楚學習目的，寫入 MISSION.md","找高可信度資源，列入 RESOURCES.md","每次產出一堂短課（lessons/0001-….html）","依學習紀錄判斷下一課的難度"],
+ pairs:["research"]},
+{id:"to-questionnaire",cat:"prod",inv:"user",
+ one:"把你一個人答不了的決定，變成給特定對象填寫的問卷。",
+ purpose:"只問你兩件事：寄給誰、需要拿回什麼。然後針對「對方知道、你不知道」的落差出題，重要的問題放前面。",
+ when:["需要廠長、財務、供應商或顧問提供資訊才能決定","想讓會議更有效率，事先把問題列好"],
+ cmd:"/to-questionnaire 二廠設備搬遷需要環保顧問確認的事項",
+ steps:["說明對象的角色、專業和你們的關係","列出你必須拿回的決策或事實","產出 to-questionnaire-<主題>.md"],
+ pairs:["grill-me","wayfinder"]},
+{id:"wait-what",cat:"prod",inv:"user",
+ one:"AI 上一句你看不懂時立刻用：請它補上下文、用簡單的話重講。",
+ purpose:"要求 AI 補充背景，改用「簡化技術英文」（ASD-STE100），並使用 GLOSSARY.md 的統一用語重新說明。",
+ when:["回覆滿是術語","AI 跳得太快，你跟不上"],
+ cmd:"/wait-what",
+ steps:["直接輸入，不需參數"],
+ pairs:["domain-modeling"],
+ note:"指令內容規定用簡化英文，中文使用者可能會收到英文回覆；可以接著補一句「請用中文」。"},
+// ---------- Productivity · model ----------
+{id:"grilling",cat:"prod",inv:"model",
+ one:"追問的底層引擎：把決策畫成設計樹，一輪輪問到所有分支都解決。",
+ purpose:"每一輪只問「前提已確定」的問題（稱為前線），附建議答案。能查到的事實自己查，必須由你做的決定才問你；你確認共識之前不動手。",
+ when:["你說「grill 我」或想壓力測試想法時自動觸發","被 grill-me、grill-with-docs、triage、wayfinder、improve-codebase-architecture 呼叫"],
+ cmd:"幫我把這個導入計畫 grill 一遍",
+ steps:["建立設計樹，找出目前可問的前線","一次問完整輪，等你回答","依答案重算前線，直到沒有剩下的問題"],
+ pairs:["grill-me","grill-with-docs","triage"]},
+{id:"writing-for-agents",cat:"prod",inv:"model",
+ one:"撰寫給 AI 讀的文件（skill、AGENTS.md、CLAUDE.md）的寫作指南。",
+ purpose:"重點包含：描述的措辭決定 AI 何時讀取、常駐內容要精簡、細節移到獨立檔案、每一步要有明確的完成條件、用正面指示取代禁止句、刪掉不會改變行為的句子。",
+ when:["撰寫或修改 skill","整理 CLAUDE.md / AGENTS.md","被 retro 呼叫"],
+ cmd:"幫我改寫這份 CLAUDE.md，讓 agent 更穩定照做",
+ steps:["區分「步驟」與「參考資料」","只在多數情況都需要時才放主檔，其餘移到獨立檔案","逐句檢查：刪掉它，AI 行為會不會改變？"],
+ pairs:["retro"]}
+];
+const byId = Object.fromEntries(S.map(s=>[s.id,s]));
+const CAT = {eng:"Engineering",prod:"Productivity"};
+const INV = {user:"你觸發",model:"AI 可自動觸發"};
+
+const NEEDS = [
+ {t:"不知道該用哪個",p:["ask-matt"],w:"描述處境，讓路由器幫你選。"},
+ {t:"開新功能，但需求還模糊",p:["grill-with-docs","to-spec"],w:"在 repo 裡先被追問，共識成形後再寫成規格。"},
+ {t:"一般規劃或決策（不寫程式）",p:["grill-me"],w:"同樣的追問方式，但不產生文件。"},
+ {t:"大工程，一次對話做不完",p:["wayfinder","to-spec","to-tickets"],w:"先畫決策地圖，路線清楚後再轉成規格與工單。"},
+ {t:"把規格拆成可分工的工單",p:["to-tickets","implement"],w:"切成可獨立展示的切片，再逐張實作。"},
+ {t:"一次實作整份規格",p:["implement-spec"],w:"多個子 agent 平行開發，最後統一審查。"},
+ {t:"bug 修不好、系統變慢",p:["diagnosing-bugs","tdd"],w:"先建立會亮紅燈的迴圈，修好後補回歸測試。"},
+ {t:"程式越寫越亂",p:["improve-codebase-architecture","codebase-design"],w:"找出淺模組，討論如何整併成深模組。"},
+ {t:"寫完了，要審查與發 PR",p:["code-review","pr"],w:"雙軸審查後，用固定格式寫 PR 說明。"},
+ {t:"整理 issue 清單",p:["triage"],w:"標好類別與狀態，挑出可交給 AI 的工作。"},
+ {t:"需要別人提供答案",p:["to-questionnaire"],w:"產出一份給特定對象填寫的問卷。"},
+ {t:"看不懂 AI 剛說的話",p:["wait-what"],w:"要它補上下文、用簡單的話重講。"},
+ {t:"對話太長，要換人接手",p:["handoff"],w:"壓縮成交接文件，在新對話引用。"},
+ {t:"要手動設定金鑰或後台",p:["wizard"],w:"產生逐步引導你操作的腳本。"},
+ {t:"想學一項新技能",p:["teach"],w:"資料夾變教室，跨多次 session 學習。"},
+ {t:"讓 AI 下次表現更好",p:["retro","writing-for-agents"],w:"回顧環境問題，並改寫給 AI 讀的文件。"}
+];
+
+const FLOW = [
+ {t:"設定",d:"每個 repo 一次",c:["setup-matt-pocock-skills"]},
+ {t:"對齊需求",d:"被追問到沒有模糊地帶",c:["grill-with-docs","grill-me"]},
+ {t:"需要實際跑跑看？",d:"用 handoff 往返原型",c:["prototype","handoff"]},
+ {t:"寫規格、切工單",d:"多 session 的工作才需要",c:["to-spec","to-tickets"]},
+ {t:"實作",d:"逐張或整份平行",c:["implement","implement-spec","tdd"]},
+ {t:"審查與交付",d:"雙軸審查，寫 PR",c:["code-review","pr","retro"]}
+];
+
+const $ = s=>document.querySelector(s);
+const chip = id => `<button class="chip ${byId[id].inv}" data-open="${id}">/${id}</button>`;
+
+// stats
+const cnt = (f)=>S.filter(f).length;
+$("#stats").innerHTML = `<span><b>${S.length}</b>個 skill</span><span><b>${cnt(s=>s.cat==="eng")}</b>Engineering</span><span><b>${cnt(s=>s.cat==="prod")}</b>Productivity</span><span><b>${cnt(s=>s.inv==="user")}</b>你觸發</span><span><b>${cnt(s=>s.inv==="model")}</b>AI 可自動</span>`;
+
+// router
+const needsEl = $("#needs"), ans = $("#answer");
+needsEl.innerHTML = NEEDS.map((n,i)=>`<button class="need" data-i="${i}" aria-pressed="${i===1}">${n.t}</button>`).join("");
+function showNeed(i){
+  const n = NEEDS[i];
+  needsEl.querySelectorAll(".need").forEach(b=>b.setAttribute("aria-pressed", b.dataset.i==i));
+  ans.innerHTML = `<span class="eyebrow">建議路徑</span><div class="path">${n.p.map(chip).join('<span class="arrow">→</span>')}</div><p class="why">${n.w}</p><p class="why">${byId[n.p[0]].one}</p>`;
+}
+needsEl.addEventListener("click",e=>{const b=e.target.closest(".need"); if(b) showNeed(+b.dataset.i)});
+showNeed(1);
+
+// flow
+$("#flow").innerHTML = FLOW.map((f,i)=>`<div class="stage"><span class="n">STEP ${i+1}</span><span class="t">${f.t}</span><span class="d">${f.d}</span><div class="chips">${f.c.map(chip).join("")}</div></div>`).join("");
+
+// grid + filters
+const state = {cat:"all",inv:"all",q:""};
+function render(){
+  const q = state.q.trim().toLowerCase();
+  const list = S.filter(s=>(state.cat==="all"||s.cat===state.cat)&&(state.inv==="all"||s.inv===state.inv)&&
+    (!q || [s.id,s.one,s.purpose,...s.when].join(" ").toLowerCase().includes(q)));
+  $("#count").textContent = `顯示 ${list.length} / ${S.length}`;
+  $("#grid").innerHTML = list.length ? list.map(s=>`<button class="card" data-open="${s.id}">
+     <div class="top"><span class="name">/${s.id}</span><span class="tag ${s.inv}">${s.inv==="user"?"你觸發":"AI 可自動"}</span></div>
+     <p class="one">${s.one}</p>
+     <div class="meta" style="align-self:end"><span class="tag cat">${CAT[s.cat]}</span></div></button>`).join("")
+   : `<p class="empty">找不到符合的 skill，試試其他關鍵字，例如「測試」或「規格」。</p>`;
+}
+function seg(id,key){ $(id).addEventListener("click",e=>{const b=e.target.closest("button"); if(!b)return;
+  state[key]=b.dataset.v; $(id).querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b)); render();});}
+seg("#f-cat","cat"); seg("#f-inv","inv");
+$("#q").addEventListener("input",e=>{state.q=e.target.value; render()});
+render();
+
+// drawer
+const drawer=$("#drawer"), scrim=$("#scrim"); let lastFocus=null;
+function openSkill(id){
+  const s=byId[id]; if(!s) return;
+  lastFocus=document.activeElement;
+  const howLabel = s.inv==="user" ? "輸入指令" : "直接這樣說（也可輸入 /"+s.id+"）";
+  drawer.innerHTML = `<button class="close" id="d-close">關閉 ✕</button>
+   <div class="head"><div class="meta" style="display:flex;gap:6px;flex-wrap:wrap"><span class="tag ${s.inv}">${INV[s.inv]}</span><span class="tag cat">${CAT[s.cat]}</span></div>
+   <h2 id="d-name">/${s.id}</h2><p style="font-size:16px">${s.one}</p></div>
+   <div class="sec"><h3>目的</h3><p>${s.purpose}</p></div>
+   <div class="sec"><h3>什麼時候用</h3><ul>${s.when.map(w=>`<li>${w}</li>`).join("")}</ul></div>
+   <div class="sec"><h3>怎麼用 · ${howLabel}</h3><div class="cmd"><code id="d-cmd">${s.cmd}</code><button id="d-copy">複製</button></div>
+     <ol style="margin:6px 0 0;padding-left:20px;display:grid;gap:4px">${s.steps.map(x=>`<li>${x}</li>`).join("")}</ol></div>
+   ${s.note?`<p class="note">${s.note}</p>`:""}
+   <div class="sec"><h3>常搭配</h3><div class="pairs">${s.pairs.map(chip).join("")}</div></div>
+   <p class="side">範例指令為示意，可替換成你自己的情境。</p>`;
+  drawer.hidden=false; scrim.hidden=false; $("#d-close").focus();
+  try{ history.replaceState(null,"","#"+id) }catch(e){}
+}
+function closeSkill(){ drawer.hidden=true; scrim.hidden=true; try{history.replaceState(null,"",location.pathname+location.search)}catch(e){} if(lastFocus) lastFocus.focus(); }
+document.addEventListener("click",e=>{
+  const o=e.target.closest("[data-open]"); if(o){ openSkill(o.dataset.open); return; }
+  if(e.target.id==="d-close"||e.target===scrim) closeSkill();
+  if(e.target.id==="d-copy"){ const t=$("#d-cmd").textContent, b=e.target;
+    const ok=()=>{b.textContent="已複製"; setTimeout(()=>b.textContent="複製",1400)};
+    const sel=()=>{const r=document.createRange(); r.selectNodeContents($("#d-cmd")); const s=getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent="已選取，請按複製";};
+    try{ navigator.clipboard.writeText(t).then(ok,sel) }catch(err){ sel() } }
+});
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!drawer.hidden) closeSkill(); });
+const h=location.hash.slice(1); if(byId[h]) openSkill(h);
+</script>
+
+</body>
+</html>
